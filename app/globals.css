@@ -1,0 +1,145 @@
+@import "tailwindcss";
+
+:root {
+  --background: #0B0B0F;
+  --foreground: #ffffff;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  /* NotePR Design Tokens */
+  --color-ink: #0B0B0F;
+  --color-ink-soft: #16161D;
+  --color-surface: #F7F7F9;
+  --color-surface-2: #EFEFF2;
+  --color-accent: #7C3AED;
+  --color-accent-hover: #6D28D9;
+  --color-accent-muted: #EDE9FE;
+  --color-accent-muted-text: #5B21B6;
+  --color-border: #E4E4E7;
+  --color-border-soft: #F0F0F3;
+  --color-text-muted: #71717A;
+  --color-text-secondary: #3F3F46;
+
+  /* Typography scale */
+  --text-display: 4rem;
+  --text-display--line-height: 1.05;
+  --text-display--letter-spacing: -0.03em;
+  --text-h1: 3rem;
+  --text-h1--line-height: 1.1;
+  --text-h1--letter-spacing: -0.025em;
+  --text-h2: 2.25rem;
+  --text-h2--line-height: 1.15;
+  --text-h2--letter-spacing: -0.02em;
+  --text-h3: 1.5rem;
+  --text-h3--line-height: 1.3;
+  --text-label: 0.75rem;
+  --text-label--letter-spacing: 0.1em;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Hero CTA buttons — CSS animation, no GSAP dependency */
+@keyframes heroCta {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* GSAP animation safety — prevent elements staying invisible if JS is slow */
+@media (prefers-reduced-motion: reduce) {
+  .hero-pill,
+  .hero-h1,
+  .hero-subtitle,
+  .hero-cta-1,
+  .hero-cta-2,
+  .hero-social,
+  .nav-item,
+  .cta-content > * {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+  }
+}
+
+/* ── Rich-text editor content styles ─────────────────────── */
+.prose-editor b,
+.prose-editor strong { font-weight: 700; color: #fff; }
+
+.prose-editor i,
+.prose-editor em { font-style: italic; }
+
+.prose-editor u { text-decoration: underline; }
+
+.prose-editor s,
+.prose-editor strike { text-decoration: line-through; color: #71717a; }
+
+.prose-editor ul {
+  list-style: disc;
+  padding-left: 1.5rem;
+  margin: 0.5rem 0;
+}
+
+.prose-editor ol {
+  list-style: decimal;
+  padding-left: 1.5rem;
+  margin: 0.5rem 0;
+}
+
+.prose-editor li {
+  margin: 0.2rem 0;
+  color: #d4d4d8;
+}
+
+.prose-editor p {
+  margin: 0.25rem 0;
+}
+
+.prose-editor a {
+  color: #7C3AED;
+  text-decoration: underline;
+}
+
+.prose-editor:focus {
+  outline: none;
+}
+
+/* ── Dashboard: dark scrollbars (Firefox + WebKit) ───────────────── */
+.note-editor-scroll {
+  scrollbar-color: rgb(63 63 70) rgb(22 22 29); /* thumb track — zinc-600 / ink-soft */
+  scrollbar-width: thin;
+}
+
+.note-editor-scroll::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.note-editor-scroll::-webkit-scrollbar-track {
+  background: #16161d;
+  border-radius: 999px;
+}
+
+.note-editor-scroll::-webkit-scrollbar-thumb {
+  background: #3f3f46;
+  border-radius: 999px;
+  border: 2px solid #16161d;
+}
+
+.note-editor-scroll::-webkit-scrollbar-thumb:hover {
+  background: #52525b;
+}

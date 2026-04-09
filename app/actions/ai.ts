@@ -34,6 +34,22 @@ export async function summarizeNote(
     throw new Error("OpenAI API key is not configured.");
   }
 
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw new Error("Not authenticated");
+
+  const { data: owned, error: ownError } = await supabase
+    .from("notes")
+    .select("id")
+    .eq("id", noteId)
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (ownError) throw new Error(ownError.message);
+  if (!owned) throw new Error("Note not found or access denied.");
+
   const plainText = stripHtml(content);
 
   if (!plainText.trim()) {
@@ -84,21 +100,30 @@ ${plainText}`;
     throw new Error("Failed to parse AI response. Please try again.");
   }
 
-  // Persist the summary back to the notes table
-  const supabase = await createClient();
   await supabase.from("notes").update({ summary: result }).eq("id", noteId);
 
   return result;
 }
+
+const MAX_TRANSCRIBE_BYTES = 25 * 1024 * 1024;
 
 export async function transcribeAudio(formData: FormData): Promise<string> {
   if (!process.env.OPENAI_API_KEY) {
     throw new Error("OpenAI API key is not configured.");
   }
 
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw new Error("Not authenticated");
+
   const blob = formData.get("audio") as Blob | null;
   if (!blob || blob.size === 0) {
     throw new Error("No audio data received.");
+  }
+  if (blob.size > MAX_TRANSCRIBE_BYTES) {
+    throw new Error("Recording is too large (max 25 MB).");
   }
 
   // Determine extension from MIME type (webm or ogg; Whisper supports both)

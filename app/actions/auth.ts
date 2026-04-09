@@ -11,7 +11,7 @@ export async function signUp(formData: FormData) {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
 
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
@@ -21,6 +21,11 @@ export async function signUp(formData: FormData) {
 
   if (error) {
     return redirect(`/signup?error=${encodeURIComponent(error.message)}`);
+  }
+
+  // When "Confirm email" is enabled in Supabase, session is null until the user verifies
+  if (!data.session) {
+    return redirect(`/verify-email?email=${encodeURIComponent(email)}`);
   }
 
   return redirect("/dashboard");
@@ -35,10 +40,33 @@ export async function signIn(formData: FormData) {
   const { error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
+    if (/email not confirmed/i.test(error.message)) {
+      return redirect(`/login?pending_verification=${encodeURIComponent(email)}`);
+    }
     return redirect(`/login?error=${encodeURIComponent(error.message)}`);
   }
 
   return redirect("/dashboard");
+}
+
+export async function resendSignupConfirmation(
+  email: string,
+): Promise<{ ok: boolean; message: string }> {
+  const trimmed = email?.trim() ?? "";
+  if (!trimmed) {
+    return { ok: false, message: "Enter your email address." };
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.auth.resend({
+    type: "signup",
+    email: trimmed,
+  });
+
+  if (error) {
+    return { ok: false, message: error.message };
+  }
+  return { ok: true, message: "Confirmation email sent. Check your inbox and spam folder." };
 }
 
 export async function signOut() {

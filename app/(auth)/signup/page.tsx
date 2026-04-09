@@ -1,9 +1,11 @@
 "use client";
 
 import { Suspense, useRef } from "react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { gsap, useGSAP } from "@/app/lib/gsap";
 import { signUp } from "@/app/actions/auth";
+import GoogleSignInButton from "../components/GoogleSignInButton";
 
 gsap.registerPlugin(useGSAP);
 
@@ -63,6 +65,18 @@ function SignupContent() {
             {decodeURIComponent(error)}
           </div>
         )}
+
+        <div className="auth-item mb-6 space-y-4">
+          <GoogleSignInButton label="Continue with Google" />
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center" aria-hidden="true">
+              <span className="w-full border-t border-white/10" />
+            </div>
+            <div className="relative flex justify-center text-[11px] font-semibold uppercase tracking-wider">
+              <span className="bg-white/[0.04] px-3 text-zinc-500">or email</span>
+            </div>
+          </div>
+        </div>
 
         {/* Form */}
         <form action={signUp} className="space-y-4">
@@ -132,9 +146,9 @@ function SignupContent() {
         {/* Footer link */}
         <p className="auth-item mt-4 text-center text-sm text-zinc-500">
           Already have an account?{" "}
-          <a href="/login" className="font-semibold text-accent hover:underline">
+          <Link href="/login" className="font-semibold text-accent hover:underline">
             Sign in
-          </a>
+          </Link>
         </p>
       </div>
     </div>

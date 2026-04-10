@@ -4,18 +4,24 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/app/lib/supabase/server";
 
+function siteOrigin(): string {
+  return (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").replace(/\/$/, "");
+}
+
 export async function signUp(formData: FormData) {
   const supabase = await createClient();
 
   const fullName = formData.get("full_name") as string;
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
+  const confirmRedirect = `${siteOrigin()}/auth/callback?next=/dashboard`;
 
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
       data: { full_name: fullName },
+      emailRedirectTo: confirmRedirect,
     },
   });
 
@@ -58,9 +64,13 @@ export async function resendSignupConfirmation(
   }
 
   const supabase = await createClient();
+  const confirmRedirect = `${siteOrigin()}/auth/callback?next=/dashboard`;
   const { error } = await supabase.auth.resend({
     type: "signup",
     email: trimmed,
+    options: {
+      emailRedirectTo: confirmRedirect,
+    },
   });
 
   if (error) {

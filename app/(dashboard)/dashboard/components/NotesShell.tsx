@@ -40,6 +40,7 @@ export default function NotesShell({
   const [folderFilter, setFolderFilter] = useState<FolderFilter>("all");
   const [activeNote, setActiveNote] = useState<Note | null>(null);
   const [showSettings, setShowSettings] = useState(false);
+  const [mobileShowMain, setMobileShowMain] = useState(false);
 
   const filteredNotes = useMemo(
     () => filterNotesByFolder(notes, folderFilter),
@@ -56,6 +57,14 @@ export default function NotesShell({
       .join("")
       .toUpperCase() || email[0]?.toUpperCase() || "?";
 
+  function openMainPanel() {
+    setMobileShowMain(true);
+  }
+
+  function closeMainPanel() {
+    setMobileShowMain(false);
+  }
+
   function handleSelect(note: Note) {
     setNotes((prev) => {
       const exists = prev.some((n) => n.id === note.id);
@@ -63,6 +72,7 @@ export default function NotesShell({
     });
     setActiveNote(note);
     setShowSettings(false);
+    openMainPanel();
   }
 
   function handleNoteChange(updated: Partial<Note>) {
@@ -100,7 +110,11 @@ export default function NotesShell({
         activeId={activeNote?.id ?? null}
         onSelect={handleSelect}
         onDelete={handleDelete}
-        onViewAll={() => { setActiveNote(null); setShowSettings(false); }}
+        onViewAll={() => {
+          setActiveNote(null);
+          setShowSettings(false);
+          openMainPanel();
+        }}
         folderIdForNewNote={newNoteFolderId}
       />
     </div>
@@ -113,14 +127,25 @@ export default function NotesShell({
         avatarUrl={avatarUrl}
         listSlot={listSlot}
         isSettings={showSettings}
-        onSettingsOpen={() => setShowSettings(true)}
+        onSettingsOpen={() => {
+          setShowSettings(true);
+          openMainPanel();
+        }}
+        className={mobileShowMain ? "hidden md:flex" : "flex"}
       />
-      <main className="flex min-h-0 flex-1 flex-col overflow-hidden">
+      <main
+        className={`min-h-0 flex-1 flex-col overflow-hidden ${
+          mobileShowMain ? "flex" : "hidden md:flex"
+        }`}
+      >
         {showSettings ? (
           <div className="min-h-0 flex-1 overflow-y-auto">
             <div className="flex items-center gap-3 border-b border-white/8 px-6 py-4">
               <button
-                onClick={() => setShowSettings(false)}
+                onClick={() => {
+                  setShowSettings(false);
+                  closeMainPanel();
+                }}
                 className="flex h-8 w-8 items-center justify-center rounded-lg text-zinc-400 transition-colors hover:bg-white/8 hover:text-white"
                 aria-label="Back to notes"
               >
@@ -143,6 +168,10 @@ export default function NotesShell({
             note={activeNote}
             folders={folders}
             onNoteChange={handleNoteChange}
+            onBack={() => {
+              setActiveNote(null);
+              closeMainPanel();
+            }}
           />
         ) : (
           <AllNotesView
@@ -150,6 +179,7 @@ export default function NotesShell({
             onSelect={handleSelect}
             onDelete={handleDelete}
             folderIdForNewNote={newNoteFolderId}
+            onBack={closeMainPanel}
             folderLabel={
               folderFilter === "all"
                 ? "All notes"

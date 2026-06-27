@@ -352,9 +352,10 @@ type Props = {
   note: Note;
   folders: NoteFolder[];
   onNoteChange: (updated: Partial<Note>) => void;
+  onBack?: () => void;
 };
 
-export default function NoteEditor({ note, folders, onNoteChange }: Props) {
+export default function NoteEditor({ note, folders, onNoteChange, onBack }: Props) {
   const editorRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLInputElement>(null);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -659,7 +660,20 @@ export default function NoteEditor({ note, folders, onNoteChange }: Props) {
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
       {/* ── Title ── */}
-      <div className="border-b border-white/8 px-8 pt-8 pb-4">
+      <div className="border-b border-white/8 px-4 pt-4 pb-4 md:px-8 md:pt-8">
+        {onBack && (
+          <button
+            type="button"
+            onClick={onBack}
+            className="mb-3 flex items-center gap-1.5 rounded-lg py-1 text-xs font-medium text-zinc-400 transition-colors hover:text-white md:hidden"
+            aria-label="Back to notes"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M19 12H5M12 5l-7 7 7 7" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            Notes
+          </button>
+        )}
         <div className="mb-3 flex flex-wrap items-center gap-2">
           <label htmlFor="note-folder" className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">
             Folder
@@ -689,7 +703,7 @@ export default function NoteEditor({ note, folders, onNoteChange }: Props) {
       </div>
 
       {/* ── Toolbar ── */}
-      <div className="flex flex-wrap items-center gap-0.5 border-b border-white/8 px-6 py-2">
+      <div className="flex flex-wrap items-center gap-0.5 border-b border-white/8 px-4 py-2 md:px-6">
         {/* Bold */}
         <ToolbarBtn label="Bold" title="Bold (Ctrl+B)" active={activeFormats.bold} onClick={() => exec("bold")}>
           <span className="font-black">B</span>
@@ -897,7 +911,7 @@ export default function NoteEditor({ note, folders, onNoteChange }: Props) {
       {/* ── Editor + optional chat (one chat instance; stacks on small screens) ── */}
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden md:flex-row">
         <div className="note-editor-scroll min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-contain">
-          <div className="mx-auto max-w-3xl px-8 py-6">
+          <div className="mx-auto max-w-3xl px-4 py-6 md:px-8">
             {/* Rich-text editor area */}
             <div
               ref={editorRef}

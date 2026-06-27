@@ -11,12 +11,14 @@ export default function DashboardSidebar({
   listSlot,
   isSettings = false,
   onSettingsOpen,
+  className = "flex",
 }: {
   user: User;
   avatarUrl: string | null;
   listSlot?: React.ReactNode;
   isSettings?: boolean;
   onSettingsOpen?: () => void;
+  className?: string;
 }) {
   const [showSignOutDialog, setShowSignOutDialog] = useState(false);
 
@@ -68,7 +70,7 @@ export default function DashboardSidebar({
         </div>
       )}
 
-      <aside className="flex h-full min-h-0 w-72 shrink-0 flex-col overflow-hidden border-r border-white/8 bg-ink-soft">
+      <aside className={`h-full min-h-0 w-full shrink-0 flex-col overflow-hidden border-r border-white/8 bg-ink-soft md:w-72 ${className}`}>
         {/* Logo */}
         <div className="flex h-14 shrink-0 items-center gap-2.5 border-b border-white/8 px-5">
           <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-accent">

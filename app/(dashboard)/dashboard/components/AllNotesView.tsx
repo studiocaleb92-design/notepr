@@ -28,6 +28,7 @@ type Props = {
   onDelete: (id: string) => void;
   folderIdForNewNote: string | null;
   folderLabel: string;
+  onBack?: () => void;
 };
 
 type ViewMode = "grid" | "list";
@@ -38,6 +39,7 @@ export default function AllNotesView({
   onDelete,
   folderIdForNewNote,
   folderLabel,
+  onBack,
 }: Props) {
   const [view, setView] = useState<ViewMode>("grid");
   const [query, setQuery] = useState("");
@@ -59,20 +61,34 @@ export default function AllNotesView({
   return (
     <div className="flex h-full min-h-0 flex-col overflow-hidden">
       {/* Header bar */}
-      <div className="flex items-center justify-between border-b border-white/8 px-6 py-4">
-        <div>
-          <h1 className="text-lg font-bold text-white">{folderLabel}</h1>
-          <p className="text-xs text-zinc-500">
-            {notes.length} {notes.length === 1 ? "note" : "notes"}
-            {folderLabel !== "All notes" && (
-              <span className="text-zinc-600"> · filtered</span>
-            )}
-          </p>
+      <div className="flex flex-col gap-3 border-b border-white/8 px-4 py-3 md:flex-row md:items-center md:justify-between md:px-6 md:py-4">
+        <div className="flex items-center gap-2">
+          {onBack && (
+            <button
+              type="button"
+              onClick={onBack}
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-zinc-400 transition-colors hover:bg-white/8 hover:text-white md:hidden"
+              aria-label="Back to sidebar"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M19 12H5M12 5l-7 7 7 7" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+          )}
+          <div className="min-w-0">
+            <h1 className="truncate text-lg font-bold text-white">{folderLabel}</h1>
+            <p className="text-xs text-zinc-500">
+              {notes.length} {notes.length === 1 ? "note" : "notes"}
+              {folderLabel !== "All notes" && (
+                <span className="text-zinc-600"> · filtered</span>
+              )}
+            </p>
+          </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {/* Search */}
-          <div className="flex items-center gap-2 rounded-lg border border-white/8 bg-white/4 px-3 py-1.5">
+          <div className="flex min-w-0 flex-1 items-center gap-2 rounded-lg border border-white/8 bg-white/4 px-3 py-1.5 sm:flex-none">
             <svg width="13" height="13" viewBox="0 0 16 16" fill="none" className="shrink-0 text-zinc-500" aria-hidden="true">
               <circle cx="6.5" cy="6.5" r="5" stroke="currentColor" strokeWidth="1.5" />
               <path d="M10.5 10.5l3.5 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
@@ -82,7 +98,7 @@ export default function AllNotesView({
               placeholder="Search…"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="w-40 bg-transparent text-xs text-white placeholder-zinc-500 outline-none"
+              className="min-w-0 flex-1 bg-transparent text-xs text-white placeholder-zinc-500 outline-none sm:w-40 sm:flex-none"
             />
           </div>
 
@@ -130,7 +146,7 @@ export default function AllNotesView({
       </div>
 
       {/* Content */}
-      <div className="min-h-0 flex-1 overflow-y-auto p-6">
+      <div className="min-h-0 flex-1 overflow-y-auto p-4 md:p-6">
         {filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-4 py-24 text-center">
             <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03] text-zinc-600">
@@ -236,7 +252,7 @@ function NoteCard({
       <button
         onClick={(e) => { e.stopPropagation(); onDelete(note.id); }}
         aria-label="Delete note"
-        className="absolute right-2 top-2 hidden rounded-lg p-1 text-zinc-600 transition-colors hover:bg-red-500/15 hover:text-red-400 group-hover:flex"
+        className="absolute right-2 top-2 flex rounded-lg p-1 text-zinc-600 transition-colors hover:bg-red-500/15 hover:text-red-400 md:hidden md:group-hover:flex"
       >
         <svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true">
           <path d="M2 4h12M5 4V2h6v2M6 7v5M10 7v5M3 4l1 10h8l1-10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -296,7 +312,7 @@ function NoteRow({
       <button
         onClick={(e) => { e.stopPropagation(); onDelete(note.id); }}
         aria-label="Delete note"
-        className="hidden rounded-lg p-1.5 text-zinc-600 transition-colors hover:bg-red-500/15 hover:text-red-400 group-hover:flex"
+        className="flex rounded-lg p-1.5 text-zinc-600 transition-colors hover:bg-red-500/15 hover:text-red-400 md:hidden md:group-hover:flex"
       >
         <svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true">
           <path d="M2 4h12M5 4V2h6v2M6 7v5M10 7v5M3 4l1 10h8l1-10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />

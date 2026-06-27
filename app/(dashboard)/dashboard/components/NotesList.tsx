@@ -122,7 +122,7 @@ export default function NotesList({
                   type="button"
                   onClick={(e) => handleDeleteClick(e, note.id)}
                   aria-label="Delete note"
-                  className="absolute right-1.5 top-1.5 z-10 hidden rounded p-0.5 text-zinc-600 transition-colors hover:bg-red-500/15 hover:text-red-400 group-hover:flex"
+                  className="absolute right-1.5 top-1.5 z-10 flex rounded p-0.5 text-zinc-600 transition-colors hover:bg-red-500/15 hover:text-red-400 md:hidden md:group-hover:flex"
                 >
                   <svg width="11" height="11" viewBox="0 0 16 16" fill="none" aria-hidden="true">
                     <path d="M2 4h12M5 4V2h6v2M6 7v5M10 7v5M3 4l1 10h8l1-10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
